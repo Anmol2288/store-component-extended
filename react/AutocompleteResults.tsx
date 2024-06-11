@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react'
+import React, { Fragment, useEffect, useMemo } from 'react'
 import type { RefObject } from 'react'
 import classnames from 'classnames'
 import { FormattedMessage } from 'react-intl'
@@ -108,6 +108,27 @@ function AutocompleteResults({
 
   const items = data?.autocomplete?.itemsReturned ?? []
 
+  useEffect(()=>{
+    const getDetails = async() =>{
+      const data = await fetch(
+        `https://${window.location.hostname}/api/catalog_system/pub/products/variations/880006`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/vnd.vtex.ds.v10+json',
+            'Content-Type': 'application/json',
+            'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+            'X-VTEX-API-AppToken':
+              'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+          },
+        },
+      )
+      const response = await data.json()
+      console.log('api data', response)
+    }
+    getDetails()
+  },[])
+
   const {
     hints: { mobile },
   } = useRuntime()
@@ -200,6 +221,7 @@ function AutocompleteResults({
     )
   }
 
+  console.log(items,"itesm")
   return (
     <div style={listStyle}>
       <ul className={listClassNames} {...getMenuProps()}>
