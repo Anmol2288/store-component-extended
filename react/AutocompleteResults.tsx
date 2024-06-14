@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import type { RefObject } from 'react'
 import classnames from 'classnames'
 import { FormattedMessage } from 'react-intl'
@@ -12,7 +12,6 @@ import type { PropGetters } from 'downshift'
 import './AutocompleteResults.css'
 import autocomplete from './graphql/autocomplete.gql'
 
-const MIN_RESULTS_WIDTH = 320
 const CSS_HANDLES = [
   'resultsItem',
   'resultsList',
@@ -23,11 +22,11 @@ const CSS_HANDLES = [
   'resultsItemName',
 ] as const
 
-const getImageUrl = (image: string) => {
-  const [imageUrl] = image.match(/https?:(.*?)"/g) ?? ['']
+// const getImageUrl = (image: string) => {
+//   const [imageUrl] = image.match(/https?:(.*?)"/g) ?? ['']
 
-  return imageUrl.replace(/https?:/, '').replace(/-25-25/g, '-50-50')
-}
+//   return imageUrl.replace(/https?:/, '').replace(/-25-25/g, '-50-50')
+// }
 
 const getLinkProps = (element: AutocompleteItem) => {
   const terms = element.slug.split('/')
@@ -89,7 +88,6 @@ interface AutocompleteResult {
 
 /** List of search results to be displayed */
 function AutocompleteResults({
-  parentContainer,
   isOpen,
   inputValue,
   closeMenu,
@@ -106,28 +104,42 @@ function AutocompleteResults({
     variables: { inputValue },
   })
 
-  const items = data?.autocomplete?.itemsReturned ?? []
-
-  useEffect(()=>{
-    const getDetails = async() =>{
-      const data = await fetch(
-        `https://${window.location.hostname}/api/catalog_system/pub/products/variations/880006`,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/vnd.vtex.ds.v10+json',
-            'Content-Type': 'application/json',
-            'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
-            'X-VTEX-API-AppToken':
-              'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
-          },
-        },
+  // const items = data?.autocomplete?.itemsReturned ?? []
+  const [products, setProducts] = useState<any[]>([])
+  useEffect(() => {
+    const getDetails = async () => {
+      const newProducts = await Promise.all(
+        data?.autocomplete?.itemsReturned.map(async (item: AutocompleteItem) => {
+          try {
+            const response = await fetch(
+              `https://${window.location.hostname}/api/catalog_system/pub/products/variations/${item.productId}`,
+              {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/vnd.vtex.ds.v10+json',
+                  'Content-Type': 'application/json',
+                  'X-VTEX-API-AppKey': 'vtexappkey-skillnet-VOZXMR',
+                  'X-VTEX-API-AppToken':
+                    'RVXQMZYNRRZNTMEURBRBHPRCWYMITOEUNUPISMZTCCAGROZIUTHBZFUCZKIVIWSHJPAREKDSZSKDTFKGQZHNBKKXLIANVJLFBTJJBUWJJNDQTJVQKXLOKCMFYHWORAVT',
+                },
+              }
+            )
+            const responseData = await response.json()
+            return {
+              skus: responseData.skus,
+              itemDetail: item,
+            }
+          } catch (error) {
+            console.error('Error fetching product details:', error)
+            return null
+          }
+        }) ?? []
       )
-      const response = await data.json()
-      console.log('api data', response)
+      setProducts(newProducts.filter(product => product !== null))
     }
     getDetails()
-  },[])
+  }, [data?.autocomplete?.itemsReturned])
+
 
   const {
     hints: { mobile },
@@ -136,17 +148,17 @@ function AutocompleteResults({
   const { handles } = useCssHandles(CSS_HANDLES, { classes })
   const encodedInputValue = encodeURIComponent(inputValue)
 
-  const listStyle = useMemo(
-    () => ({
-      width: Math.max(
-        MIN_RESULTS_WIDTH,
-        parentContainer?.current?.offsetWidth ?? 0
-      ),
-    }),
-    /* with the isOpen here this will be called
-    only when you open or close the ResultList */
-    [parentContainer]
-  )
+  // const listStyle = useMemo(
+  //   () => ({
+  //     width: Math.max(
+  //       MIN_RESULTS_WIDTH,
+  //       parentContainer?.current?.offsetWidth ?? 0
+  //     ),
+  //   }),
+  //   /* with the isOpen here this will be called
+  //   only when you open or close the ResultList */
+  //   [parentContainer]
+  // )
 
   const listClassNames = classnames(
     handles.resultsList,
@@ -172,9 +184,8 @@ function AutocompleteResults({
   } = {}) {
     const highlightClass = highlightedIndex === itemIndex ? 'bg-muted-5' : ''
 
-    return `pointer pa4 outline-0 ${handles.resultsItem} ${highlightClass} ${
-      hasThumb ? 'flex justify-start' : 'db w-100'
-    }`
+    return `pointer pa4 outline-0 ${handles.resultsItem} ${highlightClass} ${hasThumb ? 'flex justify-start' : 'db w-100'
+      }`
   }
 
   const WrappedSpinner = () => (
@@ -221,9 +232,9 @@ function AutocompleteResults({
     )
   }
 
-  console.log(items,"itesm")
+  console.log(products, "products")
   return (
-    <div style={listStyle}>
+    <div className='w-full'>
       <ul className={listClassNames} {...getMenuProps()}>
         {isOpen ? (
           loading ? (
@@ -257,49 +268,60 @@ function AutocompleteResults({
                 )}
               </li>
 
-              {items.map((item, index) => {
-                return (
-                  // eslint-disable-next-line react/jsx-key
-                  <li
-                    {...getItemProps({
-                      key: `${item.name}${index}`,
-                      index: index + 1,
-                      item,
-                      onClick: handleItemClick,
-                    })}
-                  >
-                    <Link
-                      {...getLinkProps(item)}
-                      className={getListItemClassNames({
-                        itemIndex: index + 1,
-                        highlightedIndex,
-                        hasThumb: !!item.thumb,
+              {products.map((item, index) => {
+                // Ensure item and item.itemDetail are defined
+                if (item && item.itemDetail && item.skus) {
+                  return (
+                    // eslint-disable-next-line react/jsx-key
+                    <li
+                      {...getItemProps({
+                        key: `${item.itemDetail.name}${index}`,
+                        index: index + 1,
+                        item,
+                        onClick: handleItemClick,
                       })}
                     >
-                      {item.thumb && (
-                        <img
-                          width={50}
-                          height={50}
-                          alt={item.name}
-                          className={`${handles.resultsItemImage} mr4`}
-                          src={getImageUrl(item.thumb)}
-                        />
-                      )}
-                      <div
-                        className={`${handles.resultsItemName} flex justify-start items-center`}
-                      >
-                        {item.name}
-                      </div>
-                    </Link>
-                  </li>
-                )
+                      <Link
+  {...getLinkProps(item.itemDetail)}
+  className={`${getListItemClassNames({
+    itemIndex: index + 1,
+    highlightedIndex,
+    hasThumb: !!item.itemDetail.thumb,
+  })} flex justify-between items-center w-full`}
+>
+  {item.skus && item.skus[0] && item.skus[0].image && (
+    <img
+      width={50}
+      height={50}
+      alt={item.skus[0].name}
+      className={`${handles.resultsItemImage} mr4`}
+      src={item.skus[0].image}
+    />
+  )}
+  <div className={`${handles.resultsItemName}`}>
+    {item.itemDetail.name}
+  </div>
+  <div>
+    10000
+  </div>
+  <div>
+    9000
+  </div>
+</Link>
+
+                    </li>
+                  )
+                } else {
+                  return null; // Skip rendering if item or itemDetail is undefined
+                }
               })}
             </Fragment>
           )
         ) : null}
       </ul>
     </div>
-  )
+  );
+
 }
 
 export default AutocompleteResults
