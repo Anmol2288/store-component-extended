@@ -139,14 +139,14 @@ function SearchBar({
 
       if (element.term) {
         if (attemptPageTypeSearch) {
-          window.location.href = `/${element.term}`
+          window.location.href = `/${element.itemDetail.term}`
 
           return
         }
 
         if (customSearchPageUrl) {
           navigate({
-            to: customSearchPageUrl.replace(/\$\{term\}/g, element.term),
+            to: customSearchPageUrl.replace(/\$\{term\}/g, element.itemDetail.term),
           })
 
           return
@@ -154,7 +154,7 @@ function SearchBar({
 
         navigate({
           page: 'store.search',
-          params: { term: element.term },
+          params: { term: element.itemDetail.term },
           query: 'map=ft',
         })
 
@@ -163,12 +163,12 @@ function SearchBar({
 
       let page = 'store.product'
       let params: Record<string, string> = {
-        slug: element.slug,
-        id: element.productId,
+        slug: element.itemDetail.slug,
+        id: element.itemDetail.productId,
       }
 
       let query = ''
-      const terms = element.slug.split('/')
+      const terms = element.itemDetail.slug.split('/')
 
       if (element.criteria) {
         // This param is only useful to track terms searched

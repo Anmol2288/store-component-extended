@@ -24,3 +24,22 @@
     max-height: calc(100vh - 6.2rem);
   }
 }
+
+.listPriceFormatedValue{
+  text-decoration-line: line-through !important;
+  font-size: smaller !important;
+}
+
+.link{
+  text-decoration: none !important;
+}
+
+.bestPriceFormated{
+  margin-left: 0.5rem !important;
+  font-size: small !important;
+}
+
+.resultsItemName{
+  font-size: small !important;
+  padding: 0.5rem !important;
+}

@@ -1,6 +1,19 @@
 .searchBarContainer :global(.vtex-input-prefix__group) {
-  height: 38px;
+  height: 38px !important;
 }
+
+@media screen and (width > 1800px){
+  .searchBarContainer :global(.vtex-input-prefix__group){
+   width: 36.6rem !important;
+  }
+ }
+
+  @media screen and (width > 1400px) and (width < 1799px){
+   .searchBarContainer :global(.vtex-input-prefix__group){
+     width: 18.4rem !important;
+   }
+  }
+
 
 .searchBarContainer input {
   color: #727273;

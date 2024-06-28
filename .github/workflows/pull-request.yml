@@ -61,7 +61,5 @@ jobs:
           key: '${{ runner.os }}-yarn-${{ hashFiles(''**/yarn.lock'') }}'
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: yarn install
-        run: yarn install --frozen-lockfile
       - name: Lint project
         uses: vtex/action-lint@master
