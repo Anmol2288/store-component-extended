@@ -1,7 +1,7 @@
 {
-  "vendor": "vtex",
+  "vendor": "b2blatam",
   "name": "store-components",
-  "version": "3.173.0",
+  "version": "3.173.2",
   "title": "VTEX Store Components",
   "defaultLocale": "pt-BR",
   "description": "The VTEX store components for that render apps can use",
@@ -39,7 +39,7 @@
     "vtex.styleguide": "9.x"
   },
   "settingsSchema": {
-    "title": "vtex.store-components",
+    "title": "b2blatam.store-components",
     "type": "object",
     "properties": {
       "enableDefaultSeller": {

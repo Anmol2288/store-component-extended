@@ -8,11 +8,11 @@ The `autocomplete-result-list` component displays the autocomplete functionality
 
 ## Configuration
 
-1. Import the `vtex.store-components` app to your theme's dependencies in the `manifest.json` file as in the following example:
+1. Import the `b2blatam.store-components` app to your theme's dependencies in the `manifest.json` file as in the following example:
 
 ```json
   "dependencies": {
-    "vtex.store-components": "3.x"
+    "b2blatam.store-components": "3.x"
   }
 ```
 

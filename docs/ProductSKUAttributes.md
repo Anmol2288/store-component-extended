@@ -8,11 +8,11 @@ The `product-sku-attributes` block displays a list of the current SKU variations
 
 ## Configuration
 
-1. Import the `vtex.store-components` app to your theme's dependencies in the `manifest.json` file as in the following example:
+1. Import the `b2blatam.store-components` app to your theme's dependencies in the `manifest.json` file as in the following example:
 
 ```diff
   "dependencies: {
-+   "vtex.store-components": "3.x"
++   "b2blatam.store-components": "3.x"
   }
 ```  
 

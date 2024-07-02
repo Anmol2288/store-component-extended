@@ -28,7 +28,7 @@ To use this app, you must import it as dependency of your project in the `manife
 
 ```json
   "dependencies": {
-    "vtex.store-components": "3.x"
+    "b2blatam.store-components": "3.x"
   }
 ```
 
@@ -48,7 +48,7 @@ To use this CSS API, you must add the `styles` builder and create an app styling
   }
 ```
 
-2. Create a file called `vtex.store-components.css` inside the `styles/css` folder. Add your custom styles:
+2. Create a file called `b2blatam.store-components.css` inside the `styles/css` folder. Add your custom styles:
 
 ```css
 .container {

@@ -120,7 +120,7 @@ class Newsletter extends Component {
           this.state.success ? handles.confirmation : ''
         } w-100`}
       >
-        <div className={`${handles.container} mw9 mr-auto ml-auto pv9`}>
+        <div className={`${handles.container} mr-auto ml-auto pv9`}>
           {this.state.success ? (
             <Fragment>
               <div
